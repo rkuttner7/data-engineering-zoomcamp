@@ -1,0 +1,98 @@
+version: 2
+
+sources:
+  - name: staging
+    database: "{{ env_var('DBT_DATABASE', 'dtc-de-course-461917') }}"
+    schema: "{{ env_var('DBT_SCHEMA', 'zoomcamp_yellow_2024') }}"
+
+    tables:
+      - name: yellow_tripdata_partitioned
+      - name: yellow_tripdata_non_partitioned 
+
+models:
+  - name: stg_staging__green_tripdata
+    description: ""
+    columns:
+      - name: tripid
+        data_type: string
+        description: ""
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+
+      - name: vendorid
+        data_type: int64
+        description: ""
+
+      - name: ratecodeid
+        data_type: int64
+        description: ""
+
+      - name: pickup_locationid
+        data_type: int64
+        description: ""
+        tests:
+          - relationships:
+              field: locationid
+              to: ref('taxi_zone_lookup')
+              severity: warn
+
+      - name: dropoff_locationid
+        data_type: int64
+        description: ""
+        tests:
+          - relationships:
+              field: locationid
+              to: ref('taxi_zone_lookup')
+              severity: warn
+
+      - name: pickup_datetime
+        data_type: timestamp
+        description: ""
+
+      - name: dropoff_datetime
+        data_type: timestamp
+        description: ""
+
+  - name: stg_staging__yellow_tripdata
+    description: ""
+    columns:
+      - name: tripid
+        data_type: string
+        description: ""
+
+      - name: vendorid
+        data_type: int64
+        description: ""
+
+      - name: ratecodeid
+        data_type: int64
+        description: ""
+
+      - name: pickup_locationid
+        data_type: int64
+        description: ""
+        tests:
+          - relationships:
+              field: locationid
+              to: ref('taxi_zone_lookup')
+              severity: warn
+
+      - name: dropoff_locationid
+        data_type: int64
+        description: ""
+        tests:
+          - relationships:
+              field: locationid
+              to: ref('taxi_zone_lookup')
+              severity: warn
+
+      - name: pickup_datetime
+        data_type: timestamp
+        description: ""
+
+      - name: dropoff_datetime
+        data_type: timestamp
+        description: ""

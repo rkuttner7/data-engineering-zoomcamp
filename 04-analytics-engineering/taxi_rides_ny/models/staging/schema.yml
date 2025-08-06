@@ -6,8 +6,8 @@ sources:
     schema: "{{ env_var('DBT_SCHEMA', 'zoomcamp_yellow_2024') }}"
 
     tables:
-      - name: yellow_tripdata_partitioned
-      - name: yellow_tripdata_non_partitioned 
+      - name: external_green_tripdata 
+      - name: external_yellow_tripdata 
 
 models:
   - name: stg_staging__green_tripdata

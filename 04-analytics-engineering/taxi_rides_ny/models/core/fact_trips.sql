@@ -7,12 +7,12 @@
 with green_tripdata as (
     select *, 
         'Green' as service_type
-    from {{ ref('stg_green_tripdata') }}
+    from {{ ref('stg_staging__green_tripdata') }}
 ), 
 yellow_tripdata as (
     select *, 
         'Yellow' as service_type
-    from {{ ref('stg_yellow_tripdata') }}
+    from {{ ref('stg_staging__yellow_tripdata') }}
 ), 
 trips_unioned as (
     select * from green_tripdata
@@ -23,7 +23,8 @@ dim_zones as (
     select * from {{ ref('dim_zones') }}
     where borough != 'Unknown'
 )
-select trips_unioned.tripid, 
+select 
+    trips_unioned.tripid, 
     trips_unioned.vendorid, 
     trips_unioned.service_type,
     trips_unioned.ratecodeid, 
@@ -44,7 +45,12 @@ select trips_unioned.tripid,
     trips_unioned.mta_tax, 
     trips_unioned.tip_amount, 
     trips_unioned.tolls_amount, 
-    trips_unioned.ehail_fee, 
+-- Inconsistent schema across green data parquet files
+--   some records with decimals in ehail_fee column.
+-- drop since field is not really used.
+-- Error: “Parquet column 'ehail_fee' has type DOUBLE 
+-- which does not match the target cpp_type INT64”    
+--    trips_unioned.ehail_fee, 
     trips_unioned.improvement_surcharge, 
     trips_unioned.total_amount, 
     trips_unioned.payment_type, 
